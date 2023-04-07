@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './user.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,6 +7,7 @@ import { hash } from "bcryptjs";
 
 @Injectable()
 export class UsersService {
+
     constructor(
         @InjectModel(User.name) private userModel: Model<UserDocument>
     ) {
@@ -18,10 +19,7 @@ export class UsersService {
         try {
             const isUserFound = await this.getUserByEmail(data.email);
             if (isUserFound) {
-                return {
-                    success: false,
-                    message: "User already exists"
-                };
+                throw new BadRequestException("User already exists");
             }
 
             const password = await hash(data.password, 10);
@@ -29,20 +27,17 @@ export class UsersService {
             await newUser.save();
             return {
                 success: true,
-                message: "User created successfully",
-                user: newUser
+                message: "User created successfully"
             }
         } catch (error) {
             const err = error as Error;
             console.log(err.message);
-            return {
-                success: false,
-                message: "Something went wrong while creating the user"
-            }
+            throw new BadRequestException(err.message)
         }
     }
 
     async getUserByEmail(email: string) {
         return await this.userModel.findOne({ email }).exec()
     }
+
 }
