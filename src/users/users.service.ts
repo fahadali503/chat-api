@@ -9,7 +9,7 @@ import { hash } from "bcryptjs";
 export class UsersService {
 
     constructor(
-        @InjectModel(User.name) private userModel: Model<UserDocument>
+        @InjectModel(User.name) private userModel: Model<User>
     ) {
 
     }
@@ -38,6 +38,10 @@ export class UsersService {
 
     async getUserByEmail(email: string) {
         return await this.userModel.findOne({ email }).exec()
+    }
+
+    async getUserById(userId: string) {
+        return await this.userModel.findById(userId).exec();
     }
 
 }

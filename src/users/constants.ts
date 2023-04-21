@@ -3,6 +3,6 @@ export const jwtConstants = {
 };
 
 export type JwtPayload = {
-    _id: string,
+    id: string,
     email: string
 }
