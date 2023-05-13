@@ -19,8 +19,6 @@ export class Message {
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: "Chat" })
     chatId: Chat
 
-    @Prop()
-    isSeen: boolean;
 }
 export const MessageSchema = SchemaFactory.createForClass(Message);
 
