@@ -16,7 +16,7 @@ export class ChatService {
         }
         const newChat = new this.chatModel({ participants: [user1, user2] });
         await newChat.save();
-        return newChat;
+        return newChat
     }
 
     async findChatByParticipants(participant1: string, participant2: string) {
@@ -29,7 +29,7 @@ export class ChatService {
     }
 
     async findChatsByParticipant(participantId: string) {
-        const chats = await this.chatModel.find({ participants: participantId });
+        const chats = await this.chatModel.find({ participants: participantId }).populate('participants');
         return chats;
     }
 }

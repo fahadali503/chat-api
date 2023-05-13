@@ -17,6 +17,25 @@ export class ChatController {
         private messageService: MessageService,
     ) { }
 
+    @Post("create")
+    async createChat(@Body() obj: { friendId: string }, @UserDecorator() user: JwtPayload) {
+        console.log(obj)
+        const response = await this.chatService.createChat(user.id, obj.friendId);
+        return response;
+    }
+
+    @Get("all")
+    getUserChats(@UserDecorator() user: JwtPayload) {
+        return this.chatService.findChatsByParticipant(user.id);
+    }
+
+    @Post("text")
+    async createTextMessage(@Body() obj: MessageDTO, @UserDecorator() sender: JwtPayload) {
+        console.log("Got Message", sender.id)
+        return await this.messageService.createTextMessage(obj.chatId, sender.id, obj.content)
+    }
+
+
     @Post("images")
     @UseInterceptors(FilesInterceptor('files', 5, {
         fileFilter: imageFileFilter,
@@ -29,25 +48,14 @@ export class ChatController {
         return this.messageService.saveimages(files);
     }
 
-
-    @Post("text")
-    async createTextMessage(@Body() obj: MessageDTO, @UserDecorator() sender: JwtPayload) {
-        console.log("Got Message", sender.id)
-        return await this.messageService.createTextMessage(obj.chatId, sender.id, obj.content)
-    }
-
     @Post("recording")
     createRecordingMessage() { }
+
+
 
     @Get("messages")
     getMessages() {
 
     }
 
-    @Post("create")
-    async createChat(@Body() obj: { p1: string, p2: string }) {
-        console.log(obj)
-        const response = await this.chatService.createChat(obj.p1, obj.p2)
-        return response;
-    }
 }
