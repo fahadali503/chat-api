@@ -19,8 +19,9 @@ export class ChatGateway {
     client.emit("joinChat", "successfully joined the room")
   }
 
-  @SubscribeMessage('message')
+  @SubscribeMessage('test')
   handleMessage(client: Socket, payload: any, @WsUserDecorator() user: JwtPayload): string {
-    return 'Hello world!';
+    console.log(user);
+    return user.email;
   }
 }

@@ -2,6 +2,7 @@ import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from 'src/users/constants';
 import { Socket } from 'socket.io';
+import { WsException } from '@nestjs/websockets';
 
 @Injectable()
 export class WsGuard implements CanActivate {
@@ -14,7 +15,7 @@ export class WsGuard implements CanActivate {
         const client = context.switchToWs().getClient<Socket>();
         const token = this.extractTokenFromHeader(client);
         if (!token) {
-            throw new UnauthorizedException();
+            throw new WsException("Unauthorized");
         }
         try {
             const payload = await this.jwtService.verifyAsync(
@@ -25,7 +26,7 @@ export class WsGuard implements CanActivate {
             );
             client['auth-user'] = payload;
         } catch {
-            throw new UnauthorizedException();
+            throw new WsException("Unauthorized");
         }
         return true;
     }
