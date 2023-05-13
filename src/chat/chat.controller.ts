@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseInterceptors, UploadedFiles, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseInterceptors, UploadedFiles, UseGuards, Request, Param } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ChatService } from './chat.service';
 import { MessageService } from './message.service';
@@ -19,7 +19,6 @@ export class ChatController {
 
     @Post("create")
     async createChat(@Body() obj: { friendId: string }, @UserDecorator() user: JwtPayload) {
-        console.log(obj)
         const response = await this.chatService.createChat(user.id, obj.friendId);
         return response;
     }
@@ -27,6 +26,11 @@ export class ChatController {
     @Get("all")
     getUserChats(@UserDecorator() user: JwtPayload) {
         return this.chatService.findChatsByParticipant(user.id);
+    }
+
+    @Get(":chatId/messages")
+    getMessages(@Param("chatId") chatId: string) {
+        return this.messageService.getMessages(chatId);
     }
 
     @Post("text")
@@ -51,11 +55,5 @@ export class ChatController {
     @Post("recording")
     createRecordingMessage() { }
 
-
-
-    @Get("messages")
-    getMessages() {
-
-    }
 
 }

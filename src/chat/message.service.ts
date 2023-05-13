@@ -10,6 +10,11 @@ export class MessageService {
         @InjectModel(Message.name) private messageModel: Model<Message>
     ) { }
 
+    async getMessages(chatId: string) {
+        const messages = await this.messageModel.find({ chatId });
+        return messages;
+    }
+
     async createTextMessage(chatId: string, senderId: string, content: string,) {
         const message = new this.messageModel({ chatId, sender: senderId, content, messageType: "text" })
         await message.save();
