@@ -1,6 +1,11 @@
 import { MessageBody, SubscribeMessage, WebSocketGateway, WebSocketServer, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { WsUserDecorator } from './ws-user.decorator';
+import { JwtPayload } from 'src/users/constants';
+import { WsGuard } from './ws.guard';
+import { UseGuards } from '@nestjs/common'
 
+@UseGuards(WsGuard)
 @WebSocketGateway()
 export class ChatGateway {
   @WebSocketServer()
@@ -15,7 +20,7 @@ export class ChatGateway {
   }
 
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
+  handleMessage(client: Socket, payload: any, @WsUserDecorator() user: JwtPayload): string {
     return 'Hello world!';
   }
 }
