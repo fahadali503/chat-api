@@ -16,7 +16,7 @@ export class MessageService {
         const messages = await this.messageModel.find({ chatId })
             .sort({ createdAt: -1 })
             .skip((pageNumber - 1) * MessageService.PAGE_SIZE)
-            .limit(MessageService.PAGE_SIZE);
+            .limit(MessageService.PAGE_SIZE).populate("sender");
         return messages;
     }
 
