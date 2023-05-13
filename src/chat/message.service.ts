@@ -6,12 +6,17 @@ import { MessageDTO } from './dtos/text-message.dto';
 
 @Injectable()
 export class MessageService {
+    private static PAGE_SIZE = 10;
     constructor(
         @InjectModel(Message.name) private messageModel: Model<Message>
     ) { }
 
-    async getMessages(chatId: string) {
-        const messages = await this.messageModel.find({ chatId });
+    async getMessages(chatId: string, page: string) {
+        let pageNumber = parseInt(page);
+        const messages = await this.messageModel.find({ chatId })
+            .sort({ createdAt: -1 })
+            .skip((pageNumber - 1) * MessageService.PAGE_SIZE)
+            .limit(MessageService.PAGE_SIZE);
         return messages;
     }
 

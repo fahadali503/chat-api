@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UseInterceptors, UploadedFiles, UseGuards, Request, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, UseInterceptors, UploadedFiles, UseGuards, Request, Param, Query } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ChatService } from './chat.service';
 import { MessageService } from './message.service';
@@ -29,8 +29,9 @@ export class ChatController {
     }
 
     @Get(":chatId/messages")
-    getMessages(@Param("chatId") chatId: string) {
-        return this.messageService.getMessages(chatId);
+    getMessages(@Param("chatId") chatId: string, @Query('page') page: string) {
+        console.log("Page", page)
+        return this.messageService.getMessages(chatId, page);
     }
 
     @Post("text")
