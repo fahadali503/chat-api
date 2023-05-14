@@ -26,7 +26,7 @@ export class ChatGateway {
   async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() body: { chatId: string, content: string }, @WsUserDecorator() user: JwtPayload) {
     let message = await this.messageService.createTextMessage(body.chatId, user.id, body.content);
     message = await message.populate('sender');
-    client.emit('message', message);
+    this.server.in(body.chatId).emit('message', message);
   }
 
 
