@@ -4,12 +4,15 @@ import { WsUserDecorator } from './ws-user.decorator';
 import { JwtPayload } from 'src/users/constants';
 import { WsGuard } from './ws.guard';
 import { UseGuards } from '@nestjs/common'
+import { MessageService } from './message.service';
 
 @UseGuards(WsGuard)
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 export class ChatGateway {
   @WebSocketServer()
   server: Server
+
+  constructor(private messageService: MessageService) { }
 
 
   @SubscribeMessage('joinChat')
@@ -19,9 +22,9 @@ export class ChatGateway {
     client.emit("joinChat", "successfully joined the room")
   }
 
+
   @SubscribeMessage('test')
   handleMessage(client: Socket, payload: any, @WsUserDecorator() user: JwtPayload): string {
-    console.log(user);
     return user.email;
   }
 }
