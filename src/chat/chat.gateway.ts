@@ -22,9 +22,16 @@ export class ChatGateway {
     client.emit("joinChat", "successfully joined the room")
   }
 
+  @SubscribeMessage("message")
+  async handleMessage(@ConnectedSocket() client: Socket, @MessageBody() body: { chatId: string, content: string }, @WsUserDecorator() user: JwtPayload) {
+    let message = await this.messageService.createTextMessage(body.chatId, user.id, body.content);
+    message = await message.populate('sender');
+    client.emit('message', message);
+  }
+
 
   @SubscribeMessage('test')
-  handleMessage(client: Socket, payload: any, @WsUserDecorator() user: JwtPayload): string {
+  handleTest(client: Socket, payload: any, @WsUserDecorator() user: JwtPayload): string {
     return user.email;
   }
 }
